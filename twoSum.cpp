@@ -96,8 +96,10 @@ public:
         std::string vectorStr = vecToStr(nums);
         std::string targetStr = intToStr(target);
         std::string indicesStr = vecToStr(indices);
-        std::string firstIndex = indicesStr.substr(1,1);
-        std::string secondIndex = indicesStr.substr(3,1);
+        std::string firstIndex = indicesStr.substr(1,indicesStr.find(",")-1);
+        std::string indicesStr2 = indicesStr;
+        indicesStr2 = indicesStr2.erase(0, indicesStr2.find(",")+1);
+        std::string secondIndex = indicesStr2.substr(0,indicesStr2.length()-1);
         std::cout << "Input: nums = " << vectorStr << ", target = " << targetStr << std::endl;
         std::cout << "Output: " << indicesStr << std::endl;
         std::cout << "Explanation: Because nums[" << firstIndex << "] + nums[" << secondIndex << "] == " <<
@@ -109,11 +111,18 @@ public:
 int main() {
     Solution solution;
     std::vector<int> nums;
-    nums.push_back(2);
-    nums.push_back(7);
-    nums.push_back(11);
-    nums.push_back(15);
-    int target = 9;
+    std::srand(std::time(nullptr));
+    const int vectorSize = 99999;
+    const int maxNumber = 100000;
+    for (int i = 0; i < vectorSize; i++) {
+        nums.push_back(std::rand()%maxNumber);
+    }
+    int randomIndex = std::rand()%vectorSize;
+    int randomIndex2 = std::rand()%vectorSize;
+    while (randomIndex == randomIndex2) {
+        randomIndex2 = std::rand()%vectorSize;
+    }
+    int target = nums[randomIndex] + nums[randomIndex2];
     std::vector<int> indices = solution.subOptimalTwoSum(nums, target);
     std::vector<int> indices2 = solution.twoSum(nums, target);
     return 0;
