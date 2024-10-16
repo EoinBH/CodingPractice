@@ -29,20 +29,49 @@ nums2.length == n
 #include <string>
 #include <sstream>
 #include <utility>
+#include <iomanip>
 
 class Solution {
     const static int CUTOFF = 10;
 public:
     double findMedianSortedArrays(std::vector<int>& nums1, std::vector<int>& nums2) {
-        double mean = 0.00000;
-        std::cout << "nums1 == " << vecToStr(nums1) << std::endl;
+        double median = 0.00000;
+        std::cout << "nums1.size() == " << nums1.size() << std::endl;
+        std::cout << "nums2.size() == " << nums2.size() << std::endl;
         //std::cout << "nums2 == " << vecToStr(nums2) << std::endl;
 
         //Plan: mergesort algorithm maybe?
-        nums1 = mergeSort(nums1);
-        std::cout << "nums1 after mergeSort == " << vecToStr(nums1) << std::endl;
 
-        return mean;
+        std::vector<int> combinedVectors (nums1.size()+nums2.size());
+        int j = 0;
+        for (int i = 0; i < combinedVectors.size(); i++) {
+            if (i < nums1.size()) {
+                combinedVectors[i] = nums1[i];
+            } else {
+                combinedVectors[i] = nums2[j];
+                j++;
+            }
+        }
+        combinedVectors = mergeSort(combinedVectors);
+        std::cout << "combinedVectors.size() == " << combinedVectors.size() << std::endl;
+        std::cout << "combinedVectors after mergeSort == " << vecToStr(combinedVectors) << std::endl;
+        if (combinedVectors.size()%2 != 0) {
+            //odd number -> median is one number
+            std::cout << "Odd number of values in vector." << std::endl;
+            median = double(combinedVectors[(combinedVectors.size() - 1) / 2]);
+        } else {
+            //even number -> median is average of two numbers
+            std::cout << "Even number of values in vector." << std::endl;
+            int mid1 = (combinedVectors.size() - 2) / 2;
+            int mid2 = combinedVectors.size() / 2;
+            median = (double(combinedVectors[mid1]) + double(combinedVectors[mid2])) / 2;
+            std::cout << "combinedVectors[mid1] == " << combinedVectors[mid1] << std::endl;
+            std::cout << "combinedVectors[mid2] == " << combinedVectors[mid2] << std::endl;
+        }
+        std::cout << std::setfill('0') << std::setw(10) 
+          << std::fixed << std::setprecision(5) << "median == "<< median << std::endl;
+
+        return median;
     }
 
     std::vector<int> insertionSort (std::vector<int>& nums){
@@ -66,6 +95,9 @@ public:
     //[0,1,2,3,4,5,6,7,8,9,10,11,12]
     //[lo,x,x,mid,x,x,hi]|[lo,x,x,mid,x,x,hi]
     //[7,8,9,10,11,12,13,6,5,4,3,2,1]|[7,8,9,10,11,12,13,1,2,3,4,5,6]
+    //100,000 -> 10+10+10... 100,000/10 = 10,000 n/10 insertion sorts
+    //100,000,000 -> 10+10+10... 100,000,000/10 = 10,000,000 = n/10 insertion sorts
+    //n/10 insertion sorts = n/10*n^2 -> O(n^3)????
 
     std::vector<int> sort (std::vector<int>& nums, int lo, int mid, int hi) {
     	if ((hi - lo) <= CUTOFF) {
@@ -137,7 +169,7 @@ int main() {
     //std::cout << "vectorSizeM == " << vectorSizeM << std::endl;
     const int vectorSizeN = std::rand()%1001; //0 <= n <= 1000
     //std::cout << "vectorSizeN == " << vectorSizeN << std::endl;
-    const int maxNumber = 10000000; //-10^6 <= nums1[i], nums2[i] <= 10^6
+    const int maxNumber = 1000; //-10^6 <= nums1[i], nums2[i] <= 10^6
     //nums1.length == m
     for (int i = 0; i < vectorSizeM; i++) {
         nums1.push_back(std::rand()%maxNumber); //only positive ints atm
@@ -146,6 +178,6 @@ int main() {
     for (int i = 0; i < vectorSizeN; i++) {
         nums2.push_back(std::rand()%maxNumber); //only positive ints atm
     }
-    double mean = solution.findMedianSortedArrays(nums1, nums2);
+    double median = solution.findMedianSortedArrays(nums1, nums2);
     return 0;
 }
