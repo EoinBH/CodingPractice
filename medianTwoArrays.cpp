@@ -169,7 +169,7 @@ int main() {
     //std::cout << "vectorSizeM == " << vectorSizeM << std::endl;
     const int vectorSizeN = std::rand()%1001; //0 <= n <= 1000
     //std::cout << "vectorSizeN == " << vectorSizeN << std::endl;
-    const int maxNumber = 1000; //-10^6 <= nums1[i], nums2[i] <= 10^6
+    const int maxNumber = 10000000; //-10^6 <= nums1[i], nums2[i] <= 10^6
     //nums1.length == m
     for (int i = 0; i < vectorSizeM; i++) {
         nums1.push_back(std::rand()%maxNumber); //only positive ints atm
@@ -178,6 +178,13 @@ int main() {
     for (int i = 0; i < vectorSizeN; i++) {
         nums2.push_back(std::rand()%maxNumber); //only positive ints atm
     }
-    double median = solution.findMedianSortedArrays(nums1, nums2);
+    //double median = solution.findMedianSortedArrays(nums1, nums2);
+    std::vector<int> testNums1;
+    testNums1.push_back(1);
+    testNums1.push_back(2);
+    std::vector<int> testNums2;
+    testNums2.push_back(3);
+    testNums2.push_back(4);
+    double median = solution.findMedianSortedArrays(testNums1, testNums2);
     return 0;
 }
