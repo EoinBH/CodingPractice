@@ -83,9 +83,9 @@ The second get is a cache miss, so -1 is printed.
 #include <algorithm>
 #include <set>
 #include <cassert>
-using namespace std;
+//using namespace std;
 
-struct Node{
+struct Node {
    Node* next;
    Node* prev;
    int value;
@@ -94,10 +94,10 @@ struct Node{
    Node(int k, int val):prev(NULL),next(NULL),key(k),value(val){};
 };
 
-class Cache{
+class Cache {
    
    protected: 
-   map<int,Node*> mp; //map the key to the node in the linked list
+   std::map<int,Node*> mp; //map the key to the node in the linked list
    int cp;  //capacity
    Node* tail; // double linked list tail pointer
    Node* head; // double linked list head pointer
@@ -106,21 +106,77 @@ class Cache{
 
 };
 
+class LRUCache: public Cache {
+    public:
+    //Constructor
+    LRUCache(int& capacity) {
+        cp = capacity;
+    }
+
+    void set(int key, int value) {
+        //Check Node with key exists
+        if (mp.find(key) != mp.end()) {
+            //Node with key exists
+            //Update value:
+            mp[key]->value = value;
+        } else {
+            //Node with key does not exist
+            //Create new Node and set as Most Recently Used (new head)
+            if (mp.size() == 0) {
+                //No Nodes exist yet
+                Node newNode(key, value);
+                std::cout << "newNode.key = " << newNode.key << std::endl;
+                std::cout << "newNode.value = " << newNode.value << std::endl;
+                std::cout << "&newNode = " << &newNode << std::endl;
+                mp.insert(std::pair<int, Node*>(key, &newNode));
+                tail = &newNode;
+                head = &newNode;
+
+
+
+
+
+            } else {
+                //At least one Node already exists
+                //Node newNode( , NULL, key, value);
+            }
+            
+        }
+    }
+
+    int get(int key) {
+        //Get value associated with key
+        //std::cout << "get method!" << std::endl;
+        //Check Node with key exists
+        if (mp.find(key) != mp.end()) {
+            //Node with key exists
+            //Node with key is now Most Recently Used so it becomes the new head
+            std::cout << "mp[key] = " << mp[key] << std::endl;
+            std::cout << "mp[key]->value = " << mp[key]->value << std::endl;
+
+            return mp[key]->value;
+        } else {
+            //Node with key does not exist
+            return -1;
+        }
+    }
+};
+
 int main() {
-   int n, capacity,i;
-   cin >> n >> capacity;
+   int n, capacity, i;
+   std::cin >> n >> capacity;
    LRUCache l(capacity);
    for(i=0;i<n;i++) {
-      string command;
-      cin >> command;
+      std::string command;
+      std::cin >> command;
       if(command == "get") {
          int key;
-         cin >> key;
-         cout << l.get(key) << endl;
+         std::cin >> key;
+         std::cout << l.get(key) << std::endl;
       } 
       else if(command == "set") {
          int key, value;
-         cin >> key >> value;
+         std::cin >> key >> value;
          l.set(key,value);
       }
    }
