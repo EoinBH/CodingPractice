@@ -92,6 +92,7 @@ struct Node {
    int key;
    Node(Node* p, Node* n, int k, int val):prev(p),next(n),key(k),value(val){};
    Node(int k, int val):prev(NULL),next(NULL),key(k),value(val){};
+   ~Node(){};
 };
 
 class Cache {
@@ -124,40 +125,84 @@ class LRUCache: public Cache {
             //Create new Node and set as Most Recently Used (new head)
             if (mp.size() == 0) {
                 //No Nodes exist yet
-                Node newNode(key, value);
-                std::cout << "newNode.key = " << newNode.key << std::endl;
-                std::cout << "newNode.value = " << newNode.value << std::endl;
-                std::cout << "&newNode = " << &newNode << std::endl;
-                mp.insert(std::pair<int, Node*>(key, &newNode));
-                tail = &newNode;
-                head = &newNode;
-
-
-
-
-
+                Node* newNode = new Node(key, value); //Node newNode(key, value);
+                //std::cout << "newNode->key = " << newNode->key << std::endl;
+                //std::cout << "newNode->value = " << newNode->value << std::endl;
+                mp.insert(std::pair<int, Node*>(key, newNode));
+                tail = newNode;
+                head = newNode;
             } else {
                 //At least one Node already exists
-                //Node newNode( , NULL, key, value);
+                //Node newNode(prev, NULL, key, value);
+                //Head is currently pointing to a Node which will now become prev
+                Node* prev = head;
+                Node* newNode = new Node(prev, NULL, key, value);
+                //Add to map
+                mp.insert(std::pair<int, Node*>(key, newNode));
+                //Point head to new Node
+                head = newNode;
+                //Update prev.next to point to new Node
+                prev->next = newNode;
+                //If over capacity
+                if (mp.size() > cp) {
+                    //Over capacity
+                    tail->next->prev = NULL;
+                    //Remove Node key, pointer pair from map
+                    mp.erase(mp.find(tail->key));
+                    //Delete trailing Node object
+                    tail->~Node();
+                    //Update tail
+                    tail = tail->next;
+                }
             }
-            
         }
     }
 
     int get(int key) {
         //Get value associated with key
-        //std::cout << "get method!" << std::endl;
         //Check Node with key exists
         if (mp.find(key) != mp.end()) {
             //Node with key exists
+            Node* currentNode = mp[key];
             //Node with key is now Most Recently Used so it becomes the new head
-            std::cout << "mp[key] = " << mp[key] << std::endl;
-            std::cout << "mp[key]->value = " << mp[key]->value << std::endl;
+            //If not already head
+            if (head != currentNode) {
+                //Not already head
+                currentNode->next->prev = currentNode->prev; //NULL
+                if (tail != currentNode) {
+                    //Not tail Node
+                    currentNode->prev->next = currentNode->next;
+                } else {
+                    //Tail Node
+                    tail = currentNode->next;
+                }
+                currentNode->prev = head;
+                head->next = currentNode;
+                currentNode->next = NULL;
+                head = currentNode;
+            }
 
             return mp[key]->value;
         } else {
             //Node with key does not exist
             return -1;
+        }
+    }
+
+    void showCache() {
+        std::cout << "Current state of keys in cache: ";
+        Node* iterator = head;
+        while(iterator != NULL) {
+            std::cout << iterator->key << " ";
+            iterator = iterator->prev;
+        }
+        std::cout << std::endl;
+    }
+
+    void showMap() {
+        std::cout << "Map: " << std::endl;
+        for (std::map<int, Node*>::iterator it = mp.begin(); it != mp.end(); it++) {
+            std::cout << "Key: " << it->first << ", " << "Value: " << it->second->value << std::endl;
         }
     }
 };
@@ -173,11 +218,15 @@ int main() {
          int key;
          std::cin >> key;
          std::cout << l.get(key) << std::endl;
+         l.showCache();
+         l.showMap();
       } 
       else if(command == "set") {
          int key, value;
          std::cin >> key >> value;
          l.set(key,value);
+         l.showCache();
+         l.showMap();
       }
    }
    return 0;
