@@ -83,7 +83,6 @@ The second get is a cache miss, so -1 is printed.
 #include <algorithm>
 #include <set>
 #include <cassert>
-//using namespace std;
 
 struct Node {
    Node* next;
@@ -125,9 +124,7 @@ class LRUCache: public Cache {
             //Create new Node and set as Most Recently Used (new head)
             if (mp.size() == 0) {
                 //No Nodes exist yet
-                Node* newNode = new Node(key, value); //Node newNode(key, value);
-                //std::cout << "newNode->key = " << newNode->key << std::endl;
-                //std::cout << "newNode->value = " << newNode->value << std::endl;
+                Node* newNode = new Node(key, value);
                 mp.insert(std::pair<int, Node*>(key, newNode));
                 tail = newNode;
                 head = newNode;
@@ -181,7 +178,6 @@ class LRUCache: public Cache {
                 currentNode->next = NULL;
                 head = currentNode;
             }
-
             return mp[key]->value;
         } else {
             //Node with key does not exist
@@ -209,24 +205,34 @@ class LRUCache: public Cache {
 
 int main() {
    int n, capacity, i;
+   std::cout << "Enter number of commands and capacity of cache: " << std::endl;
    std::cin >> n >> capacity;
    LRUCache l(capacity);
-   for(i=0;i<n;i++) {
+   bool end = false;
+   for(i = 0; (i < n) && (!end); i++) {
       std::string command;
+      std::cout << "Enter command ('get', 'set', 'cache', 'map', 'end'): " << std::endl;
       std::cin >> command;
       if(command == "get") {
          int key;
+         std::cout << "Enter key: " << std::endl;
          std::cin >> key;
-         std::cout << l.get(key) << std::endl;
-         l.showCache();
-         l.showMap();
+         std::cout << "Value: " << l.get(key) << std::endl;
       } 
       else if(command == "set") {
          int key, value;
+         std::cout << "Enter key and value: " << std::endl;
          std::cin >> key >> value;
          l.set(key,value);
+      }
+      else if(command == "cache") {
          l.showCache();
+      }
+      else if(command == "map") {
          l.showMap();
+      }
+      else if(command == "end") {
+         end = true;
       }
    }
    return 0;
