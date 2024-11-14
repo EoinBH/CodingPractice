@@ -26,7 +26,9 @@ write a regular expression to find the valid IPs.
 Just write the MyRegex class which contains a String pattern. The string should contain the correct regular
 expression.
 
-(MyRegex class MUST NOT be public)
+(MyRegex class MUST NOT be public. There are multiple classes which will all be compiled and only one
+can be public or else there will be a compilation error. The one public class would also have to match the
+file name.)
 
 Sample Input:
 
@@ -53,9 +55,17 @@ import java.util.Scanner;
 class Solution {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        while (scanner.hasNext()) {
+        while(scanner.hasNext()) {
             String IP = scanner.next();
             System.out.println(IP.matches(new MyRegex().pattern));
         }
+    }
+}
+
+class MyRegex {
+    String pattern = "([01]?[0-9][0-9]?|2[0-4][0-9]|25[0-5])\\.([01]?[0-9][0-9]?|2[0-4][0-9]|25[0-5])"
+                    + "\\.([01]?[0-9][0-9]?|2[0-4][0-9]|25[0-5])\\.([01]?[0-9][0-9]?|2[0-4][0-9]|25[0-5])";
+    MyRegex() {
+        //Constructor
     }
 }
